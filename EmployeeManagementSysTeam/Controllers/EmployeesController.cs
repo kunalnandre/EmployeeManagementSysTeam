@@ -148,7 +148,6 @@ namespace EmployeeManagementSysTeam.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool EmployeeExists(int id)
         {
             return _context.Employees.Any(e => e.Id == id);
