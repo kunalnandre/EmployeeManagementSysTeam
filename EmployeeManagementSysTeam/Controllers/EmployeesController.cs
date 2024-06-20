@@ -50,17 +50,28 @@ namespace EmployeeManagementSysTeam.Controllers
         }
 
         // POST: Employees/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber")] Employee employee)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(employee);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (_context.Employees.Any(e => e.EmailAddress == employee.EmailAddress))
+                {
+                    ModelState.AddModelError("EmailAddress", "EmailAddress is already registered.");
+                }
+
+                if (_context.Employees.Any(e => e.PhoneNumber == employee.PhoneNumber))
+                {
+                    ModelState.AddModelError("PhoneNumber", "Mobile number is already registered.");
+                }
+
+                if (ModelState.IsValid)
+                {
+                    _context.Add(employee);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(employee);
         }
@@ -82,8 +93,6 @@ namespace EmployeeManagementSysTeam.Controllers
         }
 
         // POST: Employees/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber")] Employee employee)
@@ -95,23 +104,36 @@ namespace EmployeeManagementSysTeam.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                if (_context.Employees.Any(e => e.EmailAddress == employee.EmailAddress && e.Id != employee.Id))
                 {
-                    _context.Update(employee);
-                    await _context.SaveChangesAsync();
+                    ModelState.AddModelError("EmailAddress", "EmailAddress is already registered.");
                 }
-                catch (DbUpdateConcurrencyException)
+
+                if (_context.Employees.Any(e => e.PhoneNumber == employee.PhoneNumber && e.Id != employee.Id))
                 {
-                    if (!EmployeeExists(employee.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("PhoneNumber", "Mobile number is already registered.");
                 }
-                return RedirectToAction(nameof(Index));
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        _context.Update(employee);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!EmployeeExists(employee.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(employee);
         }
@@ -144,10 +166,10 @@ namespace EmployeeManagementSysTeam.Controllers
             {
                 _context.Employees.Remove(employee);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
         private bool EmployeeExists(int id)
         {
             return _context.Employees.Any(e => e.Id == id);
