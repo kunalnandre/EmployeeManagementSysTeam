@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" id="editForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -50,4 +50,26 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        document.getElementById('editForm').addEventListener('submit', function (event) {
+            var email = document.querySelector('input[name="EmailAddress"]').value;
+            var phone = document.querySelector('input[name="PhoneNumber"]').value;
+            var id = document.querySelector('input[name="Id"]').value;
+
+            fetch(`/Employees/IsEmailOrPhoneRegistered?email=${email}&phone=${phone}&id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.emailRegistered) {
+                        alert("Email address is already registered.");
+                        event.preventDefault();
+                    }
+                    if (data.phoneRegistered) {
+                        alert("Phone number is already registered.");
+                        event.preventDefault();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
 }

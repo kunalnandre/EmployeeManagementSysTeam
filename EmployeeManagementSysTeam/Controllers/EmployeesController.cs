@@ -163,7 +163,7 @@ namespace EmployeeManagementSysTeam.Controllers
         {
             var employee = await _context.Employees.FindAsync(id);
             if (employee != null)
-            {
+            {   
                 _context.Employees.Remove(employee);
             }
             await _context.SaveChangesAsync();
@@ -173,6 +173,27 @@ namespace EmployeeManagementSysTeam.Controllers
         private bool EmployeeExists(int id)
         {
             return _context.Employees.Any(e => e.Id == id);
+        }
+
+        public class CheckEmailPhoneResult
+        {
+            public bool EmailRegistered { get; set; }
+            public bool PhoneRegistered { get; set; }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> IsEmailOrPhoneRegistered(string email, int phone, int? id)
+        {
+            int employeeId = id.HasValue ? id.Value : 0;
+
+            var emailRegistered = await _context.Employees.AnyAsync(e => e.EmailAddress == email && (id == null || e.Id != employeeId));
+            var phoneRegistered = await _context.Employees.AnyAsync(e => e.PhoneNumber == phone && (id == null || e.Id != employeeId));
+
+            return Json(new CheckEmailPhoneResult
+            {
+                EmailRegistered = emailRegistered,
+                PhoneRegistered = phoneRegistered
+            });
         }
     }
 }
