@@ -1,51 +1,35 @@
 ﻿@model EmployeesManagementSysTeam.Models.Employee
+
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Employee Details";
 }
-<h1>Details</h1>
-<div>
-    <h4>Employee</h4>
-    <hr/>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MiddleName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MiddleName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EmailAddress)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EmailAddress)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-    </dl>
+
+<h2 class="text-center mb-4">Employee Details</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <dl class="row">
+            <dt class="col-sm-4">ID</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.Id)</dd>
+            <dt class="col-sm-4">First Name</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.FirstName)</dd>
+            <dt class="col-sm-4">Middle Name</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.MiddleName)</dd>
+            <dt class="col-sm-4">Last Name</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.LastName)</dd>
+            <dt class="col-sm-4">Email Address</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.EmailAddress)</dd>
+            <dt class="col-sm-4">Phone Number</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.PhoneNumber)</dd>
+        </dl>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-success">Edit</a> 
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="text-center">
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-success">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary ml-2">Back to List</a>
+        </div>
+    </div>
 </div>
