@@ -25,22 +25,27 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
-                    <td>@Html.DisplayFor(modelItem => item.MiddleName)</td>
-                    <td>@Html.DisplayFor(modelItem => item.LastName)</td>
-                    <td>@Html.DisplayFor(modelItem => item.EmailAddress)</td>
-                    <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
-                    <td>
-                        <div class="d-flex">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary mr-2">Edit</a>
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success mr-2">Details</a>
-                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirmDelete();">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+         <style>
+     .btn-spacing {
+        margin-right: 10px; /* Adjust the value as needed */
+        }
+            </style>
+        <tr>
+    <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+    <td>@Html.DisplayFor(modelItem => item.MiddleName)</td>
+    <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+    <td>@Html.DisplayFor(modelItem => item.EmailAddress)</td>
+    <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+    <td>
+        <div class="d-flex">
+            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-spacing">Edit</a>
+            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success btn-spacing">Details</a>
+            <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirmDelete();">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </td>
+</tr>
             }
         </tbody>
     </table>
