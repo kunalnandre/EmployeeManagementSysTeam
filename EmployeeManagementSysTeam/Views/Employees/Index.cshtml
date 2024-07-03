@@ -6,8 +6,9 @@
 
 <h1 class="text-center mb-4">Employee Management System</h1>
 
-<div class="mb-3">
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
+<div class="d-flex justify-content-between mb-3">
+    <a asp-action="Create" class="btn btn-primary">Create Employee</a>
+    <a asp-controller="Projects" asp-action="Index" class="btn btn-primary">Manage Projects</a>
 </div>
 
 <div class="table-responsive">
@@ -30,7 +31,7 @@
         margin-right: 10px; /* Adjust the value as needed */
         }
             </style>
-        <tr>
+    <tr>
     <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
     <td>@Html.DisplayFor(modelItem => item.MiddleName)</td>
     <td>@Html.DisplayFor(modelItem => item.LastName)</td>
