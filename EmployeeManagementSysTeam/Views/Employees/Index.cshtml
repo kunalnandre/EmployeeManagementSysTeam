@@ -20,6 +20,7 @@
                 <th>Last Name</th>
                 <th>Email Address</th>
                 <th>Phone Number</th>
+                <th>Project Assigned</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -37,10 +38,11 @@
     <td>@Html.DisplayFor(modelItem => item.LastName)</td>
     <td>@Html.DisplayFor(modelItem => item.EmailAddress)</td>
     <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+     <td>@Html.DisplayFor(modelItem => item.ProjectId)</td>
     <td>
         <div class="d-flex">
             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-spacing">Edit</a>
-            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success btn-spacing">Details</a>
+         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success btn-spacing">Details</a>
             <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirmDelete();">
                 <button type="submit" class="btn btn-danger">Delete</button>
             </form>

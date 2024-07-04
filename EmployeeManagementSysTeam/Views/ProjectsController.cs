@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagementSysTeam.Context;
+using EmployeesManagementSysTeam.Models;
 
 namespace EmployeeManagementSysTeam.Views
 {
@@ -71,7 +72,6 @@ namespace EmployeeManagementSysTeam.Views
             {
                 return NotFound();
             }
-
             var project = await _context.Projects.FindAsync(id);
             if (project == null)
             {

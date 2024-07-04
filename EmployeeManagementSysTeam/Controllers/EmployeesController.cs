@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using EmployeeManagementSysTeam.Context;
+// using EmployeesManagementSysTeam.Context;
 using EmployeesManagementSysTeam.Models;
+using System.Linq;
+using System.Threading.Tasks;
+using EmployeeManagementSysTeam.Context;
 
-namespace EmployeeManagementSysTeam.Controllers
+namespace EmployeesManagementSysTeam.Controllers
 {
     public class EmployeesController : Controller
     {
@@ -22,7 +21,8 @@ namespace EmployeeManagementSysTeam.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Employees.ToListAsync());
+            var employees = await _context.Employees.Include(e => e.Projects).ToListAsync();
+            return View(employees);
         }
 
         // GET: Employees/Details/5
@@ -46,24 +46,25 @@ namespace EmployeeManagementSysTeam.Controllers
         // GET: Employees/Create
         public IActionResult Create()
         {
+            ViewBag.Projects = new SelectList(_context.Projects, "Id", "Name");
             return View();
         }
 
         // POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber")] Employee employee)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber,ProjectId")] Employee employee)
         {
             if (ModelState.IsValid)
             {
                 if (_context.Employees.Any(e => e.EmailAddress == employee.EmailAddress))
                 {
-                    ModelState.AddModelError("EmailAddress", "EmailAddress is already registered.");
+                    ModelState.AddModelError("EmailAddress", "Email address is already registered.");
                 }
 
                 if (_context.Employees.Any(e => e.PhoneNumber == employee.PhoneNumber))
                 {
-                    ModelState.AddModelError("PhoneNumber", "Mobile number is already registered.");
+                    ModelState.AddModelError("PhoneNumber", "Phone number is already registered.");
                 }
 
                 if (ModelState.IsValid)
@@ -73,6 +74,7 @@ namespace EmployeeManagementSysTeam.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
+            ViewBag.Projects = new SelectList(_context.Projects, "Id", "Name", employee.ProjectId);
             return View(employee);
         }
 
@@ -89,13 +91,14 @@ namespace EmployeeManagementSysTeam.Controllers
             {
                 return NotFound();
             }
+            ViewBag.Projects = new SelectList(_context.Projects, "Id", "Name", employee.ProjectId);
             return View(employee);
         }
 
         // POST: Employees/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber,ProjectId")] Employee employee)
         {
             if (id != employee.Id)
             {
@@ -106,12 +109,12 @@ namespace EmployeeManagementSysTeam.Controllers
             {
                 if (_context.Employees.Any(e => e.EmailAddress == employee.EmailAddress && e.Id != employee.Id))
                 {
-                    ModelState.AddModelError("EmailAddress", "EmailAddress is already registered.");
+                    ModelState.AddModelError("EmailAddress", "Email address is already registered.");
                 }
 
                 if (_context.Employees.Any(e => e.PhoneNumber == employee.PhoneNumber && e.Id != employee.Id))
                 {
-                    ModelState.AddModelError("PhoneNumber", "Mobile number is already registered.");
+                    ModelState.AddModelError("PhoneNumber", "Phone number is already registered.");
                 }
 
                 if (ModelState.IsValid)
@@ -135,6 +138,7 @@ namespace EmployeeManagementSysTeam.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
+            ViewBag.Projects = new SelectList(_context.Projects, "Id", "Name", employee.ProjectId);
             return View(employee);
         }
 
@@ -147,6 +151,7 @@ namespace EmployeeManagementSysTeam.Controllers
             }
 
             var employee = await _context.Employees
+                .Include(e => e.Projects)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
@@ -163,7 +168,7 @@ namespace EmployeeManagementSysTeam.Controllers
         {
             var employee = await _context.Employees.FindAsync(id);
             if (employee != null)
-            {   
+            {
                 _context.Employees.Remove(employee);
             }
             await _context.SaveChangesAsync();
@@ -195,7 +200,5 @@ namespace EmployeeManagementSysTeam.Controllers
                 PhoneRegistered = phoneRegistered
             });
         }
-
-
     }
 }
