@@ -8,8 +8,7 @@
         public string LastName { get; set; }
         public string EmailAddress { get; set; }
         public int PhoneNumber { get; set; }
-
-        public int? ProjectId { get; set; }
+        public string ProjectName { get; set; }
 
         public ICollection<Project> Projects { get; set; } = new List<Project>();
     }

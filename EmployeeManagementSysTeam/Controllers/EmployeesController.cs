@@ -37,7 +37,7 @@ namespace EmployeesManagementSysTeam.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
-                return NotFound();
+                return NotFound();  
             }
 
             return View(employee);
@@ -46,14 +46,14 @@ namespace EmployeesManagementSysTeam.Controllers
         // GET: Employees/Create
         public IActionResult Create()
         {
-            ViewBag.Projects = new SelectList(_context.Projects, "Id", "Name");
+            ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name");
             return View();
         }
 
         // POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber,ProjectId")] Employee employee)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber,ProjectName")] Employee employee)
         {
             if (ModelState.IsValid)
             {
@@ -74,7 +74,7 @@ namespace EmployeesManagementSysTeam.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            ViewBag.Projects = new SelectList(_context.Projects, "Id", "Name", employee.ProjectId);
+            ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name", employee.ProjectName);
             return View(employee);
         }
 
@@ -91,14 +91,14 @@ namespace EmployeesManagementSysTeam.Controllers
             {
                 return NotFound();
             }
-            ViewBag.Projects = new SelectList(_context.Projects, "Id", "Name", employee.ProjectId);
+            ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name", employee.ProjectName);
             return View(employee);
         }
 
         // POST: Employees/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber,ProjectId")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber,ProjectName")] Employee employee)
         {
             if (id != employee.Id)
             {
@@ -138,7 +138,7 @@ namespace EmployeesManagementSysTeam.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            ViewBag.Projects = new SelectList(_context.Projects, "Id", "Name", employee.ProjectId);
+            ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name", employee.ProjectName);
             return View(employee);
         }
 
