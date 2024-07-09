@@ -23,10 +23,7 @@ namespace EmployeesManagementSysTeam.Controllers
                 return View();
             }
 
-        public IActionResult AdminLoginPage()
-        {
-            return View();
-        }
+       
 
 
 

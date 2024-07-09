@@ -1,11 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@model EmployeeManagementSysTeam.ViewModels.LoginViewModel
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Management System - Login</title>
     <style>
-        
         * {
             box-sizing: border-box;
             margin: 0;
@@ -14,16 +15,16 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa; 
+            background-color: #f8f9fa;
             margin: 0;
         }
 
         .header {
-            background: linear-gradient(to right, #4b6cb7, #182848); 
-            color: #ffffff; 
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: #ffffff;
             padding: 30px 0;
             text-align: center;
-            border-bottom: 3px solid #1e385d; 
+            border-bottom: 3px solid #1e385d;
         }
 
             .header h1 {
@@ -49,27 +50,27 @@
         }
 
         .btn-primary {
-            background-color: #007bff; 
-            border-color: #007bff; 
+            background-color: #007bff;
+            border-color: #007bff;
         }
 
             .btn-primary:hover {
-                background-color: #0056b3; 
-                border-color: #0056b3; 
+                background-color: #0056b3;
+                border-color: #0056b3;
             }
 
         .btn-secondary {
-            background-color: #6c757d; 
-            border-color: #6c757d; 
+            background-color: #6c757d;
+            border-color: #6c757d;
         }
 
             .btn-secondary:hover {
-                background-color: #5a6268; 
-                border-color: #5a6268; 
+                background-color: #5a6268;
+                border-color: #5a6268;
             }
 
         .jumbotron {
-            background-color: #ffffff; 
+            background-color: #ffffff;
             margin-top: 30px;
             padding: 40px 20px;
             border-radius: 10px;
@@ -90,11 +91,12 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #ffffff; 
+            background-color: #ffffff;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-top: 30px;
         }
+
             .form-container h2 {
                 font-size: 2 rem;
                 margin-bottom: 20px;
@@ -144,23 +146,28 @@
     <div class="header">
         <h1>Welcome to Employee Management System</h1>
         <p class="lead">Efficiently manage your workforce with ease</p>
-        <a href="/Employees/AdminLoginPage" class="btn btn-primary btn-custom">Admin Login</a>
+        <a href="/Admin/Login" class="btn btn-primary btn-custom">Admin Login</a>
         <a href="/Employees/EmployeeLoginPage" class="btn btn-secondary btn-custom">Employee Login</a>
     </div>
 
     <div class="container">
         <div class="form-container">
             <h2>Admin Login</h2>
-            <form action="#" method="POST">
+            <form asp-action="Login" method="post">
                 <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
+                    <label asp-for="Username"></label>
+                    <input asp-for="Username" class="form-control" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" type="password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
                 <button type="submit" class="btn btn-login">Login</button>
+                <div class="text-danger">
+                    @Html.ValidationSummary()
+                </div>
             </form>
         </div>
     </div>
