@@ -18,6 +18,18 @@ namespace EmployeesManagementSysTeam.Controllers
             _context = context;
         }
 
+            public IActionResult EmployeeLoginPage()
+            {
+                return View();
+            }
+
+        public IActionResult AdminLoginPage()
+        {
+            return View();
+        }
+
+
+
         // GET: Employees
         public async Task<IActionResult> Index()
         {

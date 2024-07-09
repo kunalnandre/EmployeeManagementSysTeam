@@ -8,12 +8,9 @@ namespace EmployeeManagementSysTeam.Context
 	{
         public ApplicationDbContext()
         {   
-
         }
-
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> contextOptions) : base(contextOptions)
 		{
-
 		}
         public DbSet<Project> Projects { get; set; }
         public DbSet<Employee> Employees { get; set; }
