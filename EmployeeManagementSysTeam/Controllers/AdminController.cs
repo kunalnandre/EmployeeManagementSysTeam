@@ -22,7 +22,7 @@ namespace EmployeeManagementSysTeam.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(AdminLoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -40,7 +40,6 @@ namespace EmployeeManagementSysTeam.Controllers
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 }
             }
-
             return View(model);
         }
     }

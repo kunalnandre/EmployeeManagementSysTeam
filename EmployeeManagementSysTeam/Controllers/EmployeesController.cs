@@ -6,6 +6,7 @@ using EmployeesManagementSysTeam.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using EmployeeManagementSysTeam.Context;
+using EmployeeManagementSysTeam.ViewModels;
 
 namespace EmployeesManagementSysTeam.Controllers
 {
@@ -23,7 +24,29 @@ namespace EmployeesManagementSysTeam.Controllers
                 return View();
             }
 
-       
+        [HttpPost]
+        public IActionResult Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var employee = _context.Employees
+                    .FirstOrDefault(e => e.EmailAddress == model.Email && e.PhoneNumber == model.PhoneNumber);
+
+                if (employee != null)
+                {
+                    // Redirect to the details page of the logged-in employee
+                    return RedirectToAction("Details", new { id = employee.Id });
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                }
+            }
+
+            return View("EmployeeLoginPage", model);
+        }
+
+
 
 
 
