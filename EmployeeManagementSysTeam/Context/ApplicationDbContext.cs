@@ -19,6 +19,5 @@ namespace EmployeeManagementSysTeam.Context
 
 
         public DbSet<Admin> LoginViewModel { get; set; }
-
     }
 }
