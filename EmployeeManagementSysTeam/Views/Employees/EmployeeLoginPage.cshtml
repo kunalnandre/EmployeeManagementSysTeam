@@ -164,6 +164,9 @@
                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                 </div>
                 <button type="submit" class="btn btn-login">Login</button>
+                <div class="text-danger">
+                    @Html.ValidationSummary()
+                </div>
             </form>
         </div>
     </div>

@@ -20,7 +20,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Employees/EmployeeLoginPage";
     });
 
-var app = builder.Build();
+var app = builder.Build();  
 
 if (!app.Environment.IsDevelopment())
 {

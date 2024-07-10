@@ -9,7 +9,7 @@ namespace EmployeeManagementSysTeam.Controllers
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
-
+            
         public AdminController(ApplicationDbContext context)
         {
             _context = context;
@@ -29,7 +29,7 @@ namespace EmployeeManagementSysTeam.Controllers
                 var admin = await _context.Admins
                     .FirstOrDefaultAsync(a => a.Username == model.Username && a.Password == model.Password);
 
-                if (admin != null)
+                if (admin != null)  
                 {
                     // Redirect to the dashboard if login is successful
                     return RedirectToAction("Index", "Employees");

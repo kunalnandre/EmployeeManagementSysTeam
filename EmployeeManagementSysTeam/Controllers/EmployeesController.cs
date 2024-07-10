@@ -34,7 +34,6 @@ namespace EmployeesManagementSysTeam.Controllers
 
                 if (employee != null)
                 {
-                    // Redirect to the details page of the logged-in employee
                     return RedirectToAction("Details", new { id = employee.Id });
                 }
                 else
@@ -42,13 +41,8 @@ namespace EmployeesManagementSysTeam.Controllers
                     ModelState.AddModelError("", "Invalid login attempt.");
                 }
             }
-
             return View("EmployeeLoginPage", model);
         }
-
-
-
-
 
         // GET: Employees
         public async Task<IActionResult> Index()
@@ -105,7 +99,7 @@ namespace EmployeesManagementSysTeam.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-            }
+            }   
             ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name", employee.ProjectName);
             return View(employee);
         }
@@ -232,5 +226,5 @@ namespace EmployeesManagementSysTeam.Controllers
                 PhoneRegistered = phoneRegistered
             });
         }
-    }
-}
+    }               
+}           
