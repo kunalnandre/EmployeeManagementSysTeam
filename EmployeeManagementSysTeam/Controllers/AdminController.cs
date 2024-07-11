@@ -31,12 +31,10 @@ namespace EmployeeManagementSysTeam.Controllers
 
                 if (admin != null)  
                 {
-                    // Redirect to the dashboard if login is successful
                     return RedirectToAction("Index", "Employees");
                 }
                 else
                 {
-                    // Show a warning if username or password is wrong
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 }
             }
