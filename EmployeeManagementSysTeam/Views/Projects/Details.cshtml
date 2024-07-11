@@ -1,41 +1,44 @@
-﻿@model Project
+﻿@model EmployeesManagementSysTeam.Models.Employee
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Employee Details";
+    var isLoggedIn = ViewData["IsLoggedIn"] as bool? ?? false;
 }
-<h1>Details</h1>
 
-<div>
-    <h4>Project</h4>
-    <hr/>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-    </dl>
+<h2 class="text-center mb-4">Employee Details</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <dl class="row">
+            <dt class="col-sm-4">First Name</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.FirstName)</dd>
+            <dt class="col-sm-4">Middle Name</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.MiddleName)</dd>
+            <dt class="col-sm-4">Last Name</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.LastName)</dd>
+            <dt class="col-sm-4">Email Address</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.EmailAddress)</dd>
+            <dt class="col-sm-4">Phone Number</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.PhoneNumber)</dd>
+            <dt class="col-sm-4">Project Assigned</dt>
+            <dd class="col-sm-8">
+                @foreach (var project in Model.Projects)
+                {
+                    <div>@project.Name (@project.Description) - @project.StartDate.ToShortDateString() to @project.EndDate.ToShortDateString()</div>
+                }
+            </dd>
+        </dl>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" class="btn btn-success" asp-route-id="@Model?.Id">Edit</a> 
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</div>
+
+@if (!isLoggedIn)
+{
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6">
+            <div class="text-center">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-success">Edit</a>
+                <a asp-action="Index" class="btn btn-secondary ml-2">Back to List</a>
+            </div>
+        </div>
+    </div>
+}

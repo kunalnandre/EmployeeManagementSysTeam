@@ -39,7 +39,6 @@ namespace EmployeeManagementSysTeam.Views
             {
                 return NotFound();
             }
-
             return View(project);
         }
 

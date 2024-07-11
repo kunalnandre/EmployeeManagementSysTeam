@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-// using EmployeesManagementSysTeam.Context;
 using EmployeesManagementSysTeam.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using EmployeeManagementSysTeam.Context;
 using EmployeeManagementSysTeam.ViewModels;
+using Microsoft.AspNetCore.Http;
 
 namespace EmployeesManagementSysTeam.Controllers
 {
@@ -19,10 +19,10 @@ namespace EmployeesManagementSysTeam.Controllers
             _context = context;
         }
 
-            public IActionResult EmployeeLoginPage()
-            {
-                return View();
-            }
+        public IActionResult EmployeeLoginPage()
+        {
+            return View();
+        }
 
         [HttpPost]
         public IActionResult Login(LoginViewModel model)
@@ -34,7 +34,10 @@ namespace EmployeesManagementSysTeam.Controllers
 
                 if (employee != null)
                 {
-                    return RedirectToAction("Details", new { id = employee.Id });
+                    // Set the employee ID in the session
+                    HttpContext.Session.SetInt32("EmployeeId", employee.Id);
+
+                    return RedirectToAction("MyDetails");
                 }
                 else
                 {
@@ -42,6 +45,28 @@ namespace EmployeesManagementSysTeam.Controllers
                 }
             }
             return View("EmployeeLoginPage", model);
+        }
+
+        [HttpGet]
+        public IActionResult MyDetails()
+        {
+            var employeeId = HttpContext.Session.GetInt32("EmployeeId");
+            if (employeeId == null)
+            {
+                return RedirectToAction("EmployeeLoginPage");
+            }
+
+            var employee = _context.Employees
+                .Include(e => e.Projects)
+                .FirstOrDefault(e => e.Id == employeeId.Value);
+
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["IsLoggedIn"] = true;
+            return View("Details", employee);
         }
 
         // GET: Employees
@@ -60,12 +85,14 @@ namespace EmployeesManagementSysTeam.Controllers
             }
 
             var employee = await _context.Employees
+                .Include(e => e.Projects)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
-                return NotFound();  
+                return NotFound();
             }
 
+            ViewData["IsLoggedIn"] = ViewData["IsLoggedIn"] ?? false;
             return View(employee);
         }
 
@@ -99,7 +126,7 @@ namespace EmployeesManagementSysTeam.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-            }   
+            }
             ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name", employee.ProjectName);
             return View(employee);
         }
@@ -226,5 +253,5 @@ namespace EmployeesManagementSysTeam.Controllers
                 PhoneRegistered = phoneRegistered
             });
         }
-    }               
-}           
+    }
+}
