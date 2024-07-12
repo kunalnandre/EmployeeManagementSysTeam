@@ -1,7 +1,6 @@
 ﻿using EmployeesManagementSysTeam.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
-
 public class Project
 {
     public int Id { get; set; }

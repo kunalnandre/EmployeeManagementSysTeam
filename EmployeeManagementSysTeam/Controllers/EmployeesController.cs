@@ -1,202 +1,209 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using EmployeesManagementSysTeam.Models;
+using EmployeeManagementSysTeam.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using EmployeeManagementSysTeam.Context;
 using EmployeeManagementSysTeam.ViewModels;
 using Microsoft.AspNetCore.Http;
+using EmployeeManagementSysTeam.Services;
+using EmployeesManagementSysTeam.Models;
 
-namespace EmployeesManagementSysTeam.Controllers
+namespace EmployeeManagementSysTeam.Controllers
 {
-    public class EmployeesController : Controller
-    {
-        private readonly ApplicationDbContext _context;
+	public class EmployeesController : Controller
+	{
+		private readonly ApplicationDbContext _context;
+		private readonly IEmployeeService _employeeService;
 
-        public EmployeesController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+		public EmployeesController(ApplicationDbContext context, IEmployeeService employeeService)
+		{
+			_context = context;
+			_employeeService = employeeService;
+		}
 
-        public IActionResult EmployeeLoginPage()
-        {
-            return View();
-        }
+		public IActionResult EmployeeLoginPage()
+		{
+			return View();
+		}
 
-        [HttpPost]
-        public IActionResult Login(LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var employee = _context.Employees
-                    .FirstOrDefault(e => e.EmailAddress == model.Email && e.PhoneNumber == model.PhoneNumber);
+		[HttpPost]
+		public IActionResult Login(LoginViewModel model)
+		{
+			if (ModelState.IsValid)
+			{
+				var employee = _context.Employees
+					.FirstOrDefault(e => e.EmailAddress == model.Email && e.PhoneNumber == model.PhoneNumber);
 
-                if (employee != null)
-                {
-                    // Set the employee ID in the session
-                    HttpContext.Session.SetInt32("EmployeeId", employee.Id);
+				if (employee != null)
+				{
+					// Set the employee ID in the session
+					HttpContext.Session.SetInt32("EmployeeId", employee.Id);
 
-                    return RedirectToAction("MyDetails");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                }
-            }
-            return View("EmployeeLoginPage", model);
-        }
+					return RedirectToAction("MyDetails");
+				}
+				else
+				{
+					ModelState.AddModelError("", "Invalid login attempt.");
+				}
+			}
+			return View("EmployeeLoginPage", model);
+		}
 
-        [HttpGet]
-        public IActionResult MyDetails()
-        {
-            var employeeId = HttpContext.Session.GetInt32("EmployeeId");
-            if (employeeId == null)
-            {
-                return RedirectToAction("EmployeeLoginPage");
-            }
+		[HttpGet]
+		public IActionResult MyDetails()
+		{
+			var employeeId = HttpContext.Session.GetInt32("EmployeeId");
+			if (employeeId == null)
+			{
+				return RedirectToAction("EmployeeLoginPage");
+			}
 
-            var employee = _context.Employees
-                .Include(e => e.Projects)
-                .FirstOrDefault(e => e.Id == employeeId.Value);
+			var employee = _context.Employees
+				.Include(e => e.Projects)
+				.FirstOrDefault(e => e.Id == employeeId.Value);
 
-            if (employee == null)
-            {
-                return NotFound();
-            }
+			if (employee == null)
+			{
+				return NotFound();
+			}
 
-            ViewData["IsLoggedIn"] = true;
-            return View("Details", employee);
-        }
+			ViewData["IsLoggedIn"] = true;
+			return View("Details", employee);
+		}
 
         // GET: Employees
         public async Task<IActionResult> Index()
         {
             var employees = await _context.Employees.Include(e => e.Projects).ToListAsync();
+            var employeesWithAnniversaries = _employeeService.GetEmployeesWithAnniversaries(); // Assuming you have a service method to get relevant employees
+            ViewBag.EmployeesWithAnniversaries = employeesWithAnniversaries;
             return View(employees);
         }
 
+
         // GET: Employees/Details/5
         public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
 
-            var employee = await _context.Employees
-                .Include(e => e.Projects)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
+			var employee = await _context.Employees
+				.Include(e => e.Projects)
+				.FirstOrDefaultAsync(m => m.Id == id);
+			if (employee == null)
+			{
+				return NotFound();
+			}
 
-            ViewData["IsLoggedIn"] = ViewData["IsLoggedIn"] ?? false;
-            return View(employee);
-        }
+			ViewData["IsLoggedIn"] = ViewData["IsLoggedIn"] ?? false;
+			return View(employee);
+		}
 
-        // GET: Employees/Create
-        public IActionResult Create()
-        {
-            ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name");
-            return View();
-        }
+		// GET: Employees/Create
+		public IActionResult Create()
+		{
+			ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name");
+			return View();
+		}
 
-        // POST: Employees/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber,ProjectName")] Employee employee)
-        {
-            if (ModelState.IsValid)
-            {
-                if (_context.Employees.Any(e => e.EmailAddress == employee.EmailAddress))
-                {
-                    ModelState.AddModelError("EmailAddress", "Email address is already registered.");
-                }
+		// POST: Employees/Create
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create([Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber,ProjectName,HireDate")] Employee employee)
+		{
+			if (ModelState.IsValid)
+			{
+				if (_context.Employees.Any(e => e.EmailAddress == employee.EmailAddress))
+				{
+					ModelState.AddModelError("EmailAddress", "Email address is already registered.");
+				}
 
-                if (_context.Employees.Any(e => e.PhoneNumber == employee.PhoneNumber))
-                {
-                    ModelState.AddModelError("PhoneNumber", "Phone number is already registered.");
-                }
+				if (_context.Employees.Any(e => e.PhoneNumber == employee.PhoneNumber))
+				{
+					ModelState.AddModelError("PhoneNumber", "Phone number is already registered.");
+				}
 
-                if (ModelState.IsValid)
-                {
-                    _context.Add(employee);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-            }
-            ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name", employee.ProjectName);
-            return View(employee);
-        }
+				if (ModelState.IsValid)
+				{
+					_context.Add(employee);
+					await _context.SaveChangesAsync();
+					return RedirectToAction(nameof(Index));
+				}
+			}
+			ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name", employee.ProjectName);
+			return View(employee);
+		}
 
-        // GET: Employees/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+		// GET: Employees/Edit/5
+		public async Task<IActionResult> Edit(int? id)
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
 
-            var employee = await _context.Employees.FindAsync(id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-            ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name", employee.ProjectName);
-            return View(employee);
-        }
+			var employee = await _context.Employees.FindAsync(id);
+			if (employee == null)
+			{
+				return NotFound();
+			}
+			ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name", employee.ProjectName);
+			return View(employee);
+		}
 
-        // POST: Employees/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber,ProjectName")] Employee employee)
-        {
-            if (id != employee.Id)
-            {
-                return NotFound();
-            }
+		// POST: Employees/Edit/5
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,MiddleName,LastName,EmailAddress,PhoneNumber,ProjectName,HireDate")] Employee employee)
+		{
+			if (id != employee.Id)
+			{
+				return NotFound();
+			}
 
-            if (ModelState.IsValid)
-            {
-                if (_context.Employees.Any(e => e.EmailAddress == employee.EmailAddress && e.Id != employee.Id))
-                {
-                    ModelState.AddModelError("EmailAddress", "Email address is already registered.");
-                }
+			if (ModelState.IsValid)
+				{
+				if (_context.Employees.Any(e => e.EmailAddress == employee.EmailAddress && e.Id != employee.Id))
+				{
+					ModelState.AddModelError("EmailAddress", "Email address is already registered.");
+				}
 
-                if (_context.Employees.Any(e => e.PhoneNumber == employee.PhoneNumber && e.Id != employee.Id))
-                {
-                    ModelState.AddModelError("PhoneNumber", "Phone number is already registered.");
-                }
+				if (_context.Employees.Any(e => e.PhoneNumber == employee.PhoneNumber && e.Id != employee.Id))
+				{
+					ModelState.AddModelError("PhoneNumber", "Phone number is already registered.");
+				}
 
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        _context.Update(employee);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!EmployeeExists(employee.Id))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                    return RedirectToAction(nameof(Index));
-                }
-            }
-            ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name", employee.ProjectName);
-            return View(employee);
-        }
+				if (ModelState.IsValid)
+				{
+					try
+					{
+						_context.Update(employee);
+						await _context.SaveChangesAsync();
+					}
+					catch (DbUpdateConcurrencyException)
+					{
+						if (!EmployeeExists(employee.Id))
+						{
+							return NotFound();
+						}
+						else
+						{
+							throw;
+						}
+					}
+					return RedirectToAction(nameof(Index));
+				}
+			}
+			ViewBag.Projects = new SelectList(_context.Projects, "Name", "Name", employee.ProjectName);
+			return View(employee);
+		}
 
-        // GET: Employees/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+		// GET: Employees/Delete/5
+		public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {

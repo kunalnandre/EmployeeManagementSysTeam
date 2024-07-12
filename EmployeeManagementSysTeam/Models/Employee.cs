@@ -9,6 +9,7 @@
         public string EmailAddress { get; set; }
         public int PhoneNumber { get; set; }        
         public string ProjectName { get; set; }
-        public ICollection<Project> Projects { get; set; } = new List<Project>();
+		public DateTime HireDate { get; set; } 
+		public ICollection<Project> Projects { get; set; } = new List<Project>();
     }
 }
